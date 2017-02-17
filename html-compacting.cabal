@@ -1,0 +1,61 @@
+name:
+  html-compacting
+version:
+  0.1
+category:
+  Web, HTML
+synopsis:
+  Algorithms for compacting HTML
+homepage:
+  https://github.com/nikita-volkov/html-compacting
+bug-reports:
+  https://github.com/nikita-volkov/html-compacting/issues
+author:
+  Nikita Volkov <nikita.y.volkov@mail.ru>
+maintainer:
+  Nikita Volkov <nikita.y.volkov@mail.ru>
+copyright:
+  (c) 2017, Nikita Volkov
+license:
+  MIT
+license-file:
+  LICENSE
+build-type:
+  Simple
+cabal-version:
+  >=1.10
+
+source-repository head
+  type:
+    git
+  location:
+    git://github.com/nikita-volkov/html-compacting.git
+
+library
+  hs-source-dirs:
+    library
+  exposed-modules:
+    HTML.Compacting
+  other-modules:
+    HTML.Compacting.Folding.Transducer
+    HTML.Compacting.Folding.Node
+    HTML.Compacting.Folding.Text
+    HTML.Compacting.Folding.Attoparsec.Text
+    HTML.Compacting.Folding.Attoparsec.Common
+    HTML.Compacting.Attoparsec.Text
+    HTML.Prelude
+  default-extensions:
+    Arrows, BangPatterns, ConstraintKinds, DataKinds, DefaultSignatures, DeriveDataTypeable, DeriveFoldable, DeriveFunctor, DeriveGeneric, DeriveTraversable, EmptyDataDecls, FlexibleContexts, FlexibleInstances, FunctionalDependencies, GADTs, GeneralizedNewtypeDeriving, LambdaCase, LiberalTypeSynonyms, MagicHash, MultiParamTypeClasses, MultiWayIf, NoImplicitPrelude, NoMonomorphismRestriction, OverloadedStrings, PatternGuards, ParallelListComp, QuasiQuotes, RankNTypes, RecordWildCards, ScopedTypeVariables, StandaloneDeriving, TemplateHaskell, TupleSections, TypeFamilies, TypeOperators, UnboxedTuples
+  default-language:
+    Haskell2010
+  build-depends:
+    -- 
+    xml-types == 0.3.*,
+    attoparsec == 0.13.*,
+    -- 
+    text >= 1 && < 2,
+    --
+    foldl == 1.*,
+    semigroups < 2,
+    base-prelude < 2,
+    base < 5
