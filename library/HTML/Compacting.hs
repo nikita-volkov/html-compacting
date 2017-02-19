@@ -34,37 +34,39 @@ process =
                       E.fromList list
                       where
                         list =
-                          removeAllSpace <> keepUntouched
+                          mconcat
+                          [
+                            group A.removingSpaceBetweenTags $
+                            [
+                              "html",
+                              "head",
+                              "body",
+                              "base",
+                              "link",
+                              "meta",
+                              "title",
+                              "table",
+                              "tbody",
+                              "tr",
+                              "colgroup",
+                              "col",
+                              "optgroup",
+                              "select",
+                              "ul",
+                              "ol",
+                              "dl",
+                              "form"
+                            ]
+                            ,
+                            group id $
+                            [
+                              "pre"
+                            ]
+                          ]
                           where
                             group transducer =
                               map (\name -> (name, transducer))
-                            removeAllSpace =
-                              group A.removingSpaceBetweenTags $
-                              [
-                                "html",
-                                "head",
-                                "body",
-                                "base",
-                                "link",
-                                "meta",
-                                "title",
-                                "table",
-                                "tbody",
-                                "tr",
-                                "colgroup",
-                                "col",
-                                "optgroup",
-                                "select",
-                                "ul",
-                                "ol",
-                                "dl",
-                                "form"
-                              ]
-                            keepUntouched =
-                              group id $
-                              [
-                                "pre"
-                              ]
+                              
                 defaultTransducer =
                   A.compressingSpace
     _ ->
