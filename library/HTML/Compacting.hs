@@ -15,59 +15,70 @@ import qualified Data.HashMap.Strict as E
 
 process :: [Node] -> [Node]
 process =
-  foldMap $ \case
-    NodeElement (Element name attributes nodes) ->
-      return (NodeElement (Element name attributes newNodes))
+  transduce A.compressingSpace
+
+transduce :: C.Transducer Node Node -> [Node] -> [Node]
+transduce transducer =
+  D.fold ((C.map (mapElement processElement) . transducer) D.list)
+
+mapElement :: (Element -> Element) -> Node -> Node
+mapElement mapping =
+  \case
+    NodeElement element -> NodeElement (mapping element)
+    node -> node
+
+processElement :: Element -> Element
+processElement (Element name attributes nodes) =
+  Element name attributes newNodes
+  where
+    newNodes =
+      transduce transducer nodes
       where
-        newNodes =
-          process (D.fold (transducer D.list) nodes)
+        transducer :: C.Transducer Node Node
+        transducer =
+          case name of
+            Name localName Nothing Nothing -> lookupTransducer localName
+            _ -> defaultTransducer
           where
-            transducer =
-              case name of
-                Name localName Nothing Nothing -> lookupTransducer localName
-                _ -> defaultTransducer
+            lookupTransducer localName =
+              E.lookupDefault defaultTransducer localName hashMap
               where
-                lookupTransducer localName =
-                  E.lookupDefault defaultTransducer localName hashMap
+                hashMap =
+                  E.fromList list
                   where
-                    hashMap =
-                      E.fromList list
+                    list =
+                      mconcat
+                      [
+                        group A.removingSpaceBetweenTags $
+                        [
+                          "html",
+                          "head",
+                          "body",
+                          "base",
+                          "link",
+                          "meta",
+                          "title",
+                          "table",
+                          "tbody",
+                          "tr",
+                          "colgroup",
+                          "col",
+                          "optgroup",
+                          "select",
+                          "ul",
+                          "ol",
+                          "dl",
+                          "form"
+                        ]
+                        ,
+                        group id $
+                        [
+                          "pre"
+                        ]
+                      ]
                       where
-                        list =
-                          mconcat
-                          [
-                            group A.removingSpaceBetweenTags $
-                            [
-                              "html",
-                              "head",
-                              "body",
-                              "base",
-                              "link",
-                              "meta",
-                              "title",
-                              "table",
-                              "tbody",
-                              "tr",
-                              "colgroup",
-                              "col",
-                              "optgroup",
-                              "select",
-                              "ul",
-                              "ol",
-                              "dl",
-                              "form"
-                            ]
-                            ,
-                            group id $
-                            [
-                              "pre"
-                            ]
-                          ]
-                          where
-                            group transducer =
-                              map (\name -> (name, transducer))
-                              
-                defaultTransducer =
-                  A.compressingSpace
-    _ ->
-      mempty
+                        group transducer =
+                          map (\name -> (name, transducer))
+                          
+            defaultTransducer =
+              A.compressingSpace

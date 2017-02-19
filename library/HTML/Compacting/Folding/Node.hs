@@ -53,4 +53,19 @@ removingSingleSpaceContentTexts =
 removingSpaceBetweenTags :: E.Transducer Node Node
 removingSpaceBetweenTags =
   compressingSpace . removingSingleSpaceContentTexts
-  
+
+recursing :: E.Transducer Node Node -> E.Transducer Node Node
+recursing transducer (A.Fold step init exit) =
+  A.Fold newStep init exit
+  where
+    newStep state node =
+      step state traversedNode
+      where
+        traversedNode =
+          case node of
+            NodeElement (Element name attributes nodes) ->
+              NodeElement (Element name attributes (A.fold (recursing transducer A.list) nodes))
+            _ ->
+              node
+                
+

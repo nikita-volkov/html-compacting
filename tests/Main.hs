@@ -15,7 +15,7 @@ main =
   testGroup "All tests" $
   [
     testCase "" $
-    assertEqual "" [element "p" [" a b"]] (A.process [element "p" ["  a ", "", " b"]])
+    assertEqual "" [element "p" [" a b", element "br" []]] (A.process [element "p" ["  a ", "", " b", element "br" []]])
   ]
 
 instance IsString Node where
